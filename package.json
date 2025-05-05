@@ -6,8 +6,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --loader ts-node/esm src/index.ts",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'node --loader ts-node/esm' src/index.ts",
+    "start": "node dist/index.js",
+    "dev": "nodemon --watch src --ext ts,json --exec \"node --experimental-specifier-resolution=node --loader ts-node/esm src/index.ts\"",
+    "dev:simple": "cross-env NODE_ENV=development node --experimental-specifier-resolution=node --loader ts-node/esm src/index.ts",
     "build": "tsc --outDir dist",
     "build:dev": "tsc --outDir dist --watch"
   },
@@ -23,8 +24,13 @@
   },
   "homepage": "https://github.com/Herman100/jwt-auth#readme",
   "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^22.15.6",
+    "cross-env": "^7.0.3",
     "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "dependencies": {
