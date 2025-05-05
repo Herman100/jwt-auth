@@ -3,27 +3,34 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --loader ts-node/esm src/index.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'node --loader ts-node/esm' src/index.ts",
+    "build": "tsc --outDir dist",
+    "build:dev": "tsc --outDir dist --watch"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Herman100/jwt-auth.git"
   },
   "keywords": [],
-  "author": "",
+  "author": " Herman Kwamebour",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/Herman100/jwt-auth/issues"
   },
   "homepage": "https://github.com/Herman100/jwt-auth#readme",
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@types/node": "^22.15.6",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
+    "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2"
   }
 }
