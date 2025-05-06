@@ -5,6 +5,7 @@ import {
   generateAccessToken,
   verifyToken,
   AuthRequest,
+  generateRefreshToken,
 } from "./middlewares/jwt.js";
 
 // Configure app
@@ -31,7 +32,12 @@ app.post("/login", (req, res) => {
 
   if (email === "herman@gmail.com" && role === "admin") {
     const token = generateAccessToken({ email, role });
-    return res.status(200).json({ token });
+    const refreshToken = generateRefreshToken({ email, role });
+    return res.status(200).json({
+      message: "Login successful",
+      accessToken: token,
+      refreshToken: refreshToken,
+    });
   }
 
   return res.status(401).json({ message: "Invalid credentials" });

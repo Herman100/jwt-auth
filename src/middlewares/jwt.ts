@@ -35,10 +35,7 @@ export const generateRefreshToken = (payload: {
   email: string;
   role: string;
 }) => {
-  return jwt.sign(payload, refresh_secret, {
-    algorithm: "HS256",
-    expiresIn: "7d",
-  });
+  return jwt.sign(payload, refresh_secret);
 };
 
 // Verify JWT token middleware
