@@ -20,6 +20,13 @@ export interface AuthRequest extends Request {
   };
 }
 
+interface RefreshTokenPayload {
+  email: string;
+  role: string;
+  iat?: number;
+  exp?: number;
+}
+
 // Generate a JWT token
 export const generateAccessToken = (payload: {
   email: string;
@@ -27,7 +34,7 @@ export const generateAccessToken = (payload: {
 }) => {
   return jwt.sign(payload, access_secret, {
     algorithm: "HS256",
-    expiresIn: "1h",
+    expiresIn: "30s",
   });
 };
 
@@ -35,7 +42,21 @@ export const generateRefreshToken = (payload: {
   email: string;
   role: string;
 }) => {
-  return jwt.sign(payload, refresh_secret);
+  return jwt.sign(payload, refresh_secret, {
+    algorithm: "HS256",
+  });
+};
+
+export const verifyRefreshToken = (
+  token: string
+): RefreshTokenPayload | null => {
+  try {
+    const user = jwt.verify(token, refresh_secret) as RefreshTokenPayload;
+    return user;
+  } catch (error) {
+    console.error("Error verifying refresh token:", error);
+    return null;
+  }
 };
 
 // Verify JWT token middleware

@@ -6,6 +6,7 @@ import {
   verifyToken,
   AuthRequest,
   generateRefreshToken,
+  verifyRefreshToken,
 } from "./middlewares/jwt.js";
 
 // Configure app
@@ -41,6 +42,29 @@ app.post("/login", (req, res) => {
   }
 
   return res.status(401).json({ message: "Invalid credentials" });
+});
+
+app.post("/token-refresh", (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: "Refresh token required" });
+  }
+
+  const user = verifyRefreshToken(refreshToken);
+  if (!user) {
+    return res.status(403).json({ message: "Invalid refresh token" });
+  }
+
+  const newAccessToken = generateAccessToken({
+    email: user.email,
+    role: user.role,
+  });
+
+  return res.status(200).json({
+    message: "New access token generated",
+    accessToken: newAccessToken,
+  });
 });
 
 // Protected route
