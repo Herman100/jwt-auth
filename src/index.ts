@@ -1,13 +1,15 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import {
   generateAccessToken,
   verifyToken,
-  AuthRequest,
   generateRefreshToken,
   verifyRefreshToken,
 } from "./middlewares/jwt.js";
+import { RequestWithCookies } from "./types/cookies.js";
+import { AuthRequest } from "./types/jwt.js";
 
 // Configure app
 const app = express();
@@ -15,16 +17,22 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    credentials: true,
+  })
+);
+app.use(cookieParser());
 app.use(express.json());
 
 // Basic routes
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to the JWT Authentication API!");
 });
 
 // Authentication route
-app.post("/login", (req, res) => {
+app.post("/login", (req: Request, res: Response) => {
   const { email, role } = req.body;
 
   if (!email || !role) {
@@ -34,18 +42,26 @@ app.post("/login", (req, res) => {
   if (email === "herman@gmail.com" && role === "admin") {
     const token = generateAccessToken({ email, role });
     const refreshToken = generateRefreshToken({ email, role });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // secure in production
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: "/",
+    });
+
     return res.status(200).json({
       message: "Login successful",
       accessToken: token,
-      refreshToken: refreshToken,
     });
   }
 
   return res.status(401).json({ message: "Invalid credentials" });
 });
 
-app.post("/token-refresh", (req, res) => {
-  const { refreshToken } = req.body;
+app.post("/token-refresh", (req: RequestWithCookies, res: Response) => {
+  const { refreshToken } = req.cookies;
 
   if (!refreshToken) {
     return res.status(401).json({ message: "Refresh token required" });
@@ -68,7 +84,7 @@ app.post("/token-refresh", (req, res) => {
 });
 
 // Protected route
-app.get("/protected", verifyToken, (req: AuthRequest, res) => {
+app.get("/protected", verifyToken, (req: AuthRequest, res: Response) => {
   return res.status(200).json({
     message: "Protected route accessed",
     user: req.user,
@@ -76,7 +92,7 @@ app.get("/protected", verifyToken, (req: AuthRequest, res) => {
 });
 
 // Admin-only route
-app.get("/admin-only", verifyToken, (req: AuthRequest, res) => {
+app.get("/admin-only", verifyToken, (req: AuthRequest, res: Response) => {
   if (req.user?.role !== "admin") {
     return res
       .status(403)

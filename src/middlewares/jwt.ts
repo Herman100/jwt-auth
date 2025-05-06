@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { AuthRequest, RefreshTokenPayload } from "../types/jwt.js";
 
 dotenv.config();
 
@@ -9,23 +10,6 @@ const access_secret =
   process.env.JWT_ACCESS_TOKEN_SECRET ?? "your-access-secret-key";
 const refresh_secret =
   process.env.JWT_REFRESH_TOKEN_SECRET ?? "your-refresh-secret-key";
-
-// Define custom request type with user property
-export interface AuthRequest extends Request {
-  user?: {
-    email: string;
-    role: string;
-    iat?: number;
-    exp?: number;
-  };
-}
-
-interface RefreshTokenPayload {
-  email: string;
-  role: string;
-  iat?: number;
-  exp?: number;
-}
 
 // Generate a JWT token
 export const generateAccessToken = (payload: {
