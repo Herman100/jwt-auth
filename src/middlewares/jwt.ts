@@ -5,7 +5,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Get JWT secret from environment variables
-const secret = process.env.JWT_ACCESS_TOKEN_SECRET ?? "your-secret-key";
+const access_secret =
+  process.env.JWT_ACCESS_TOKEN_SECRET ?? "your-access-secret-key";
+const refresh_secret =
+  process.env.JWT_REFRESH_TOKEN_SECRET ?? "your-refresh-secret-key";
 
 // Define custom request type with user property
 export interface AuthRequest extends Request {
@@ -18,10 +21,23 @@ export interface AuthRequest extends Request {
 }
 
 // Generate a JWT token
-export const generateToken = (payload: { email: string; role: string }) => {
-  return jwt.sign(payload, secret, {
+export const generateAccessToken = (payload: {
+  email: string;
+  role: string;
+}) => {
+  return jwt.sign(payload, access_secret, {
     algorithm: "HS256",
     expiresIn: "1h",
+  });
+};
+
+export const generateRefreshToken = (payload: {
+  email: string;
+  role: string;
+}) => {
+  return jwt.sign(payload, refresh_secret, {
+    algorithm: "HS256",
+    expiresIn: "7d",
   });
 };
 
@@ -54,7 +70,7 @@ export const verifyToken = (
     }
 
     // Verify and decode the token
-    const decoded = jwt.verify(token, secret) as {
+    const decoded = jwt.verify(token, access_secret) as {
       email: string;
       role: string;
       iat?: number;
