@@ -10,11 +10,15 @@ import {
 } from "./middlewares/jwt.js";
 import { RequestWithCookies } from "./types/cookies.js";
 import { AuthRequest } from "./types/jwt.js";
+import logger from "../logger.js";
+import morganMiddleware from "./middlewares/morganHelper.js";
 
 // Configure app
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT || 3000;
+
+app.use(morganMiddleware);
 
 // Middleware
 app.use(

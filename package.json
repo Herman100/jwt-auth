@@ -2,13 +2,13 @@
   "name": "jwt-auth",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dist/index.js",
-    "dev": "nodemon --watch src --ext ts,json --exec \"node --experimental-specifier-resolution=node --loader ts-node/esm src/index.ts\"",
-    "dev:simple": "cross-env NODE_ENV=development node --experimental-specifier-resolution=node --loader ts-node/esm src/index.ts",
+    "dev": "nodemon --watch src --ext ts,json --exec \"node --import tsx src/index.ts\"",
+    "dev:simple": "cross-env NODE_ENV=development node --import tsx src/index.ts",
     "build": "tsc --outDir dist",
     "build:dev": "tsc --outDir dist --watch"
   },
@@ -17,7 +17,7 @@
     "url": "git+https://github.com/Herman100/jwt-auth.git"
   },
   "keywords": [],
-  "author": " Herman Kwamebour",
+  "author": "Herman Kwamebour",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Herman100/jwt-auth/issues"
@@ -28,10 +28,11 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.5",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^22.15.6",
     "cross-env": "^7.0.3",
     "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   },
   "dependencies": {
@@ -39,6 +40,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "winston": "^3.17.0"
   }
 }
